@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: webservice
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3307:3306"
+    expose:
+      - "3307"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - mynetwork
+  app:
+    build: .
+    container_name: webservice
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/webservice
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+
+volumes:
+  mysql-data:
